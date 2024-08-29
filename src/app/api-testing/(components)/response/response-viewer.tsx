@@ -13,9 +13,15 @@ import { useRequestStore } from '@/stores/api-testing/request-config.store';
 import { useEffect, useMemo } from 'react';
 import { useDebounceCallback } from 'usehooks-ts';
 import { ResponseAttachmentGuard } from './response-attachment-guard';
+import { YasumuConsole } from '@/components/console/yasumu-console';
+import { useConsole } from '@/stores/api-testing/console.store';
+import { CopyToClipboard } from '@/components/code/copy-to-clipboard';
 
 export default function ResponseViewer() {
   const { orientation } = useLayoutStore();
+  const logsCount = useConsole((state) => {
+    return state.logs.length;
+  });
   const { headers, cookies, body, abortController, responseSize, responseStatus, responseTime } = useResponse();
 
   const { current } = useRequestStore();
@@ -69,6 +75,9 @@ export default function ResponseViewer() {
             <TabsTrigger value="cookies">
               Cookies <span className="text-green-500 text-sm ml-2">({cookies.length})</span>
             </TabsTrigger>
+            <TabsTrigger value="console">
+              Console{logsCount > 0 && <span className="text-green-500 text-sm ml-2">({logsCount})</span>}
+            </TabsTrigger>
           </TabsList>
           <ResponseStats />
         </div>
@@ -88,7 +97,9 @@ export default function ResponseViewer() {
             </TabsContent>
             <TabsContent value="raw">
               <ResponseAttachmentGuard contentType={contentType}>
-                <pre className={cn('word-break-break-all whitespace-pre-wrap text-sm')}>{body}</pre>
+                <CopyToClipboard value={body}>
+                  <pre className={cn('word-break-break-all whitespace-pre-wrap text-sm')}>{body}</pre>
+                </CopyToClipboard>
               </ResponseAttachmentGuard>
             </TabsContent>
             <TabsContent value="headers">
@@ -97,6 +108,9 @@ export default function ResponseViewer() {
 
             <TabsContent value="cookies">
               <ResponseCookies cookies={cookies} />
+            </TabsContent>
+            <TabsContent value="console">
+              <YasumuConsole />
             </TabsContent>
           </div>
         )}

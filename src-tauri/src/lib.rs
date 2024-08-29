@@ -1,6 +1,7 @@
 use tauri::Manager;
 
 mod commands;
+mod tanxium;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -23,16 +24,29 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            // workspace
             commands::workspace::set_current_workspace,
             commands::workspace::get_current_workspace,
             commands::workspace::clear_current_workspace_session,
+            // network
             commands::network::get_local_address,
+            // smtp
             commands::smtp::is_smtp_server_running,
             commands::smtp::start_smtp_server,
             commands::smtp::stop_smtp_server,
             commands::smtp::get_emails,
             commands::smtp::clear_emails,
             commands::smtp::get_smtp_port,
+            commands::smtp::get_unread_emails_count,
+            commands::smtp::get_read_emails_count,
+            commands::smtp::mark_all_as_unread,
+            commands::smtp::mark_all_as_read,
+            commands::smtp::mark_as_unread,
+            commands::smtp::get_email,
+            commands::smtp::delete_email,
+            commands::smtp::get_all_emails_count,
+            // tanxium
+            tanxium::evaluate_javascript
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
