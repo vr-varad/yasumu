@@ -12,7 +12,7 @@ pub async fn evaluate_javascript(app: tauri::AppHandle, code: &str) -> Result<St
         let mut ctx = Context::default();
         let package = app.package_info();
         let app_version = format!(
-            "{} {} {}",
+            "{}.{}.{}",
             package.version.major, package.version.minor, package.version.patch
         );
 

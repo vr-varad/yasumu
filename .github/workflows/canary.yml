@@ -60,3 +60,4 @@ jobs:
           prerelease: true
           appVersion: __VERSION__-${{ github.sha }}
           args: ${{ matrix.args }}
+          appName: Yasumu Canary

@@ -8,11 +8,12 @@ import { LoadingSpinner } from './loading';
 interface IProps {
   tree: React.ReactNode;
   editor: React.ReactNode;
-  output: React.ReactNode;
+  output?: React.ReactNode;
+  rightTree?: React.ReactNode;
   lazy?: boolean;
 }
 
-export function AppView({ editor, output, tree, lazy }: IProps) {
+export function AppView({ editor, output, tree, lazy, rightTree, children }: React.PropsWithChildren<IProps>) {
   const mounted = useMounted();
   const { orientation } = useLayoutStore();
 
@@ -29,14 +30,29 @@ export function AppView({ editor, output, tree, lazy }: IProps) {
       <ResizablePanel defaultSize={85}>
         <ResizablePanelGroup direction={orientation}>
           <ResizablePanel minSize={50} defaultSize={50}>
-            {editor}
+            <div>
+              {children}
+              {editor}
+            </div>
           </ResizablePanel>
-          <ResizableHandle />
-          <ResizablePanel minSize={45} defaultSize={45}>
-            {output}
-          </ResizablePanel>
+          {output && (
+            <>
+              <ResizableHandle />
+              <ResizablePanel minSize={45} defaultSize={45}>
+                {output}
+              </ResizablePanel>
+            </>
+          )}
         </ResizablePanelGroup>
       </ResizablePanel>
+      {rightTree && (
+        <>
+          <ResizableHandle />
+          <ResizablePanel maxSize={20} minSize={15} defaultSize={15}>
+            {tree}
+          </ResizablePanel>
+        </>
+      )}
     </ResizablePanelGroup>
   );
 }

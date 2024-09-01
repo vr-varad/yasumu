@@ -3,8 +3,9 @@ const isProd = process.env.NODE_ENV === 'production';
 let internalHost = null;
 
 if (!isProd) {
-    const { internalIpV4 } = await import('internal-ip');
-    internalHost = await internalIpV4();
+    // const { internalIpV4 } = await import('internal-ip');
+    // internalHost = await internalIpV4();
+    internalHost = 'localhost';
 }
 
 /** @type {import('next').NextConfig} */

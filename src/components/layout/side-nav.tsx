@@ -14,12 +14,12 @@ export function SideNav() {
         <WithSmtpMetadata>
           <SideNavMenu link="/smtp" name="SMTP Server" icon={<Mail className="h-5 w-5" />} />
         </WithSmtpMetadata>
-        <SideNavMenu link="/graphql" name="GraphQL" comingSoon icon={<GrGraphQl className="h-5 w-5" />} />
+        <SideNavMenu link="/graphql" name="GraphQL" icon={<GrGraphQl className="h-5 w-5" />} />
         <SideNavMenu link="/websocket" name="WebSocket" comingSoon icon={<WebSocketIcon className="h-5 w-5" />} />
         <SideNavMenu link="/socketio" name="Socket.IO" comingSoon icon={<SiSocketdotio className="h-5 w-5" />} />
       </nav>
       <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-5">
-        <SideNavMenu link="/settings" name="Settings" icon={<Settings className="h-5 w-5" />} />
+        <SideNavMenu unchecked link="/settings" name="Settings" icon={<Settings className="h-5 w-5" />} />
       </nav>
     </aside>
   );

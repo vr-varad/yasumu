@@ -52,6 +52,7 @@
     "date-fns": "^3.6.0",
     "detect-programming-language": "^1.0.4",
     "framer-motion": "^11.3.18",
+    "graphiql": "^3.7.1",
     "lucide-react": "^0.378.0",
     "memfs": "^4.11.1",
     "mime-types": "^2.1.35",
