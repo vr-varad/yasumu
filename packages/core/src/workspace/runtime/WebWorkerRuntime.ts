@@ -1,6 +1,27 @@
 import { RuntimeNotInitializedError } from '@/common/errors/RuntimeNotInitializedError.js';
 import { BaseJavaScriptRuntime, type YasumuRuntimeData } from './BaseJavaScriptRuntime.js';
 
+// Types
+
+type WorkerMessage = {
+  type: 'executeModule';
+  data : {
+    module: string;
+    code: string;
+  }
+}
+
+type WorkerResponse = {
+  console: { type: string; args: string[]; timestamp: number }[];
+  request: Record<string, any>;
+  response: Record<string, any>;
+};
+
+type WorkerError = {
+  error: { message: string; timestamp: number };
+};
+
+
 // This runtime is designed for debugging purposes only. The production runtime should not use web worker version.
 
 const WEB_WORKER_BOOTSTRAP = `async function executeModule(data) {
@@ -55,20 +76,20 @@ globalThis.addEventListener('message', async (event) => {
 export class WebWorkerRuntime extends BaseJavaScriptRuntime {
   private worker: Worker | null = null;
 
-  #send<T>(data: any): Promise<T> {
+  private async send(data: WorkerMessage): Promise<WorkerResponse> {
     return new Promise((resolve, reject) => {
       if (!this.worker) {
         reject(new RuntimeNotInitializedError());
         return;
       }
 
-      this.worker.onmessage = (event) => {
+      this.worker.onmessage = (event : MessageEvent<string>) => {
         try {
-          const response = JSON.parse(event.data)
-          if(response.error){
-            reject(new Error(response.error.message));
+          const responseData : WorkerResponse | WorkerError = JSON.parse(event.data)
+          if('error' in responseData){
+            reject(new Error(responseData.error.message));
           }else{
-            resolve(response)
+            resolve(responseData)
           }
         } catch (error) {
           reject(new Error('Failed to parse worker response.'));
@@ -96,12 +117,12 @@ export class WebWorkerRuntime extends BaseJavaScriptRuntime {
     return Promise.resolve();
   }
 
-  public async executeModule(module: string, code: string): Promise<YasumuRuntimeData> {
+  public async executeModule(module: string, code: string): Promise<WorkerResponse> {
     if (!this.worker) {
       throw new RuntimeNotInitializedError();
     }
 
-    const result = await this.#send<YasumuRuntimeData>({
+    const result = await this.send({
       type: 'executeModule',
       data: {
         module,
